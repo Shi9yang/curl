@@ -3252,7 +3252,7 @@ static CURLcode ftp_done(struct connectdata *conn, CURLcode status,
      * data has been transferred. This happens when doing through NATs etc that
      * abandon old silent connections.
      */
-    long old_time = pp->response_time;
+    timediff_t old_time = pp->response_time;
 
     pp->response_time = 60*1000; /* give it only a minute for now */
     pp->response = Curl_now(); /* timeout relative now */
