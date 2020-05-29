@@ -2029,7 +2029,6 @@ static CURLcode setup_connection_internals(struct connectdata *conn)
 
 void Curl_free_request_state(struct Curl_easy *data)
 {
-  Curl_safefree(data->state.buffer);
   Curl_safefree(data->req.protop);
   Curl_safefree(data->req.newurl);
 
@@ -3937,13 +3936,6 @@ CURLcode Curl_init_do(struct Curl_easy *data, struct connectdata *conn)
 {
   struct SingleRequest *k = &data->req;
 
-  if(!data->state.buffer) {
-    char *buffer = malloc(data->set.buffer_size);
-    if(!buffer)
-      return CURLE_OUT_OF_MEMORY;
-    data->state.buffer = buffer;
-  }
-
   if(conn) {
     conn->bits.do_more = FALSE; /* by default there's no curl_do_more() to
                                    use */
@@ -3971,14 +3963,10 @@ CURLcode Curl_init_do(struct Curl_easy *data, struct connectdata *conn)
   k->start = Curl_now(); /* start time */
   k->now = k->start;   /* current time is now */
   k->header = TRUE; /* assume header */
-
   k->bytecount = 0;
-
-  k->buf = data->state.buffer;
   k->ignorebody = FALSE;
 
   Curl_speedinit(data);
-
   Curl_pgrsSetUploadCounter(data, 0);
   Curl_pgrsSetDownloadCounter(data, 0);
 
